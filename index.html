@@ -29,11 +29,12 @@
         }
         
         
+
 h1 {
     color: #55ff55;
     text-align: center;
-    font-size: 3.5em;  /* Было 4em, стало 3.5em */
-    margin: 25px 0 35px;  /* Было 30px 0 40px */
+    font-size: clamp(2.2em, 8vw, 3.5em); /* Адаптивный размер шрифта */
+    margin: 20px 10px 30px; /* Уменьшенные отступы */
     font-family: 'Bungee Shade', cursive;
     text-shadow: 
         0 0 5px #55ff55,
@@ -42,10 +43,22 @@ h1 {
         0 0 40px #55ff55,
         0 0 80px #55ff55,
         3px 3px 1px rgba(0,0,0,0.8);
-    letter-spacing: 2px;  /* Было 3px */
+    letter-spacing: 1px; /* Уменьшенный интервал */
     position: relative;
     animation: neon-glow 1.5s ease-in-out infinite alternate;
+    word-break: break-word; /* Перенос длинных слов */
+    padding: 0 10px; /* Боковые отступы */
+    box-sizing: border-box; /* Учет padding в ширине */
 }
+
+/* Медиазапрос для очень маленьких экранов */
+@media (max-width: 400px) {
+    h1 {
+        font-size: 2em;
+        letter-spacing: 0;
+    }
+}
+
 
 
         @keyframes neon-glow {
