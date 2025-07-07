@@ -28,23 +28,25 @@
             box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
         }
         
-        h1 {
-            color: #55ff55;
-            text-align: center;
-            font-size: 4em;
-            margin: 30px 0 40px;
-            font-family: 'Bungee Shade', cursive;
-            text-shadow: 
-                0 0 5px #55ff55,
-                0 0 10px #55ff55,
-                0 0 20px #55ff55,
-                0 0 40px #55ff55,
-                0 0 80px #55ff55,
-                3px 3px 1px rgba(0,0,0,0.8);
-            letter-spacing: 3px;
-            position: relative;
-            animation: neon-glow 1.5s ease-in-out infinite alternate;
-        }
+        
+h1 {
+    color: #55ff55;
+    text-align: center;
+    font-size: 3.5em;  /* Было 4em, стало 3.5em */
+    margin: 25px 0 35px;  /* Было 30px 0 40px */
+    font-family: 'Bungee Shade', cursive;
+    text-shadow: 
+        0 0 5px #55ff55,
+        0 0 10px #55ff55,
+        0 0 20px #55ff55,
+        0 0 40px #55ff55,
+        0 0 80px #55ff55,
+        3px 3px 1px rgba(0,0,0,0.8);
+    letter-spacing: 2px;  /* Было 3px */
+    position: relative;
+    animation: neon-glow 1.5s ease-in-out infinite alternate;
+}
+
 
         @keyframes neon-glow {
             from {
