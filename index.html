@@ -7,6 +7,8 @@
     <title>Kyynet Rules</title>
     <!-- Подключаем шрифт -->
     <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+    <!-- Подключаем hCaptcha -->
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <style>
         body {
             background-color: #1a1a1a;
@@ -238,51 +240,14 @@
             text-shadow: 0 0 10px #aa55ff;
         }
 
-        .captcha-image {
-            background-color: #333;
-            padding: 15px;
-            margin: 15px 0;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 24px;
-            letter-spacing: 5px;
-            color: #fff;
-            user-select: none;
-            position: relative;
-            overflow: hidden;
+        .h-captcha {
+            margin: 20px 0;
+            display: flex;
+            justify-content: center;
         }
-
-        .captcha-image::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(
-                45deg,
-                transparent 25%,
-                rgba(255, 255, 255, 0.1) 25%,
-                rgba(255, 255, 255, 0.1) 50%,
-                transparent 50%,
-                transparent 75%,
-                rgba(255, 255, 255, 0.1) 75%,
-                rgba(255, 255, 255, 0.1)
-            );
-            background-size: 20px 20px;
-            opacity: 0.3;
-        }
-
-        .captcha-input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            background-color: #333;
-            border: 1px solid #555;
-            color: #fff;
-            font-size: 16px;
-            border-radius: 5px;
-            text-align: center;
+        
+        .h-captcha iframe {
+            transform: scale(1.1);
         }
 
         .captcha-btn {
@@ -309,78 +274,20 @@
             min-height: 20px;
         }
 
-        .captcha-attempts {
-            color: #ffaa55;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
-        .captcha-timer {
-            color: #55aaff;
-            margin-top: 10px;
-            font-size: 14px;
-        }
-
-        .captcha-refresh {
-            color: #55ffaa;
-            cursor: pointer;
-            margin-top: 10px;
-            font-size: 14px;
-            text-decoration: underline;
-        }
-
-        .captcha-refresh:hover {
-            color: #33cc88;
-        }
-
-        .captcha-noise {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: 
-                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.1) 0%, transparent 2%),
-                radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.1) 0%, transparent 2%),
-                radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 2%),
-                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 2%);
-            pointer-events: none;
-        }
-
-        .captcha-grid {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-            background-size: 10px 10px;
-            pointer-events: none;
-        }
-
         .hidden {
             display: none;
         }
     </style>
 </head>
 <body>
-    <!-- Капча -->
+    <!-- Капча hCaptcha -->
     <div class="captcha-overlay" id="captchaOverlay">
         <div class="captcha-container">
             <div class="captcha-title">Подтвердите, что вы не бот</div>
-            <div class="captcha-image" id="captchaImage">
-                <div class="captcha-noise"></div>
-                <div class="captcha-grid"></div>
-                <span id="captchaText"></span>
-            </div>
-            <input type="text" class="captcha-input" id="captchaInput" placeholder="Введите текст с картинки" autocomplete="off">
-            <button class="captcha-btn" id="captchaSubmit">Подтвердить</button>
+            <!-- Виджет hCaptcha -->
+            <div class="h-captcha" data-sitekey="10000000-ffff-ffff-ffff-000000000001" data-theme="dark"></div>
             <div class="captcha-message" id="captchaMessage"></div>
-            <div class="captcha-attempts" id="captchaAttempts">Попыток осталось: 3</div>
-            <div class="captcha-timer hidden" id="captchaTimer">Повторить попытку можно через: 60 сек</div>
-            <div class="captcha-refresh" id="captchaRefresh">Обновить капчу</div>
+            <button class="captcha-btn" id="captchaSubmit">Подтвердить</button>
         </div>
     </div>
 
@@ -593,121 +500,49 @@
         top.location.href = window.location.href;
     }
 
-    // Капча
+    // Капча hCaptcha
     const captchaOverlay = document.getElementById('captchaOverlay');
-    const captchaImage = document.getElementById('captchaImage');
-    const captchaText = document.getElementById('captchaText');
-    const captchaInput = document.getElementById('captchaInput');
     const captchaSubmit = document.getElementById('captchaSubmit');
     const captchaMessage = document.getElementById('captchaMessage');
-    const captchaAttempts = document.getElementById('captchaAttempts');
-    const captchaTimer = document.getElementById('captchaTimer');
-    const captchaRefresh = document.getElementById('captchaRefresh');
     const mainContent = document.getElementById('mainContent');
 
-    let attemptsLeft = 3;
-    let currentCaptcha = '';
-    let timerInterval = null;
-    let timeLeft = 60;
-
-    // Генерация случайной капчи
-    function generateCaptcha() {
-        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
-        let result = '';
-        const length = 6 + Math.floor(Math.random() * 3); // 6-8 символов
-        
-        for (let i = 0; i < length; i++) {
-            result += chars.charAt(Math.floor(Math.random() * chars.length));
-        }
-        
-        currentCaptcha = result;
-        captchaText.textContent = result;
-        
-        // Добавляем искажения к тексту
-        captchaText.style.transform = `rotate(${(Math.random() - 0.5) * 10}deg)`;
-        captchaText.style.letterSpacing = `${1 + Math.random() * 3}px`;
-        
-        // Добавляем случайные стили для сложности
-        const styles = [
-            {color: '#ff5555', textShadow: '0 0 5px #ff0000'},
-            {color: '#55ff55', textShadow: '0 0 5px #00ff00'},
-            {color: '#5555ff', textShadow: '0 0 5px #0000ff'},
-            {color: '#ffff55', textShadow: '0 0 5px #ffff00'},
-            {color: '#ff55ff', textShadow: '0 0 5px #ff00ff'},
-            {color: '#55ffff', textShadow: '0 0 5px #00ffff'}
-        ];
-        
-        const randomStyle = styles[Math.floor(Math.random() * styles.length)];
-        Object.assign(captchaText.style, randomStyle);
-    }
-
     // Проверка капчи
-    function checkCaptcha() {
-        const userInput = captchaInput.value.trim();
+    captchaSubmit.addEventListener('click', function() {
+        const hcaptchaResponse = hcaptcha.getResponse();
         
-        if (userInput === '') {
-            captchaMessage.textContent = 'Пожалуйста, введите текст с картинки';
+        if (!hcaptchaResponse) {
+            captchaMessage.textContent = 'Пожалуйста, пройдите проверку hCaptcha';
             return;
         }
         
-        if (userInput.toLowerCase() === currentCaptcha.toLowerCase()) {
-            // Капча пройдена
-            captchaOverlay.style.display = 'none';
-            mainContent.style.display = 'block';
-            return;
-        }
+        // В реальном проекте здесь должна быть AJAX-проверка с сервером
+        // Для демо просто пропускаем
+        captchaOverlay.style.display = 'none';
+        mainContent.style.display = 'block';
         
-        // Неправильная капча
-        attemptsLeft--;
-        captchaAttempts.textContent = `Попыток осталось: ${attemptsLeft}`;
-        captchaMessage.textContent = 'Неверный текст с картинки. Попробуйте еще раз.';
-        captchaInput.value = '';
-        generateCaptcha();
-        
-        if (attemptsLeft <= 0) {
-            // Блокировка на 1 минуту
-            captchaSubmit.disabled = true;
-            captchaInput.disabled = true;
-            captchaTimer.classList.remove('hidden');
-            captchaMessage.textContent = 'Вы исчерпали все попытки. Пожалуйста, подождите.';
-            
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                captchaTimer.textContent = `Повторить попытку можно через: ${timeLeft} сек`;
-                
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    captchaSubmit.disabled = false;
-                    captchaInput.disabled = false;
-                    captchaTimer.classList.add('hidden');
-                    attemptsLeft = 3;
-                    timeLeft = 60;
-                    captchaAttempts.textContent = `Попыток осталось: ${attemptsLeft}`;
-                    captchaMessage.textContent = '';
-                }
-            }, 1000);
-        }
-    }
-
-    // Обновление капчи
-    captchaRefresh.addEventListener('click', () => {
-        if (attemptsLeft > 0) {
-            generateCaptcha();
-            captchaMessage.textContent = '';
-        }
+        // Пример серверной проверки (используйте в бэкенде):
+        /*
+        fetch('/verify-captcha', {
+            method: 'POST',
+            body: JSON.stringify({ hcaptcha: hcaptchaResponse }),
+            headers: { 'Content-Type': 'application/json' }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                captchaOverlay.style.display = 'none';
+                mainContent.style.display = 'block';
+            } else {
+                captchaMessage.textContent = 'Ошибка проверки hCaptcha';
+                hcaptcha.reset();
+            }
+        });
+        */
     });
 
-    // Отправка формы капчи
-    captchaSubmit.addEventListener('click', checkCaptcha);
-    captchaInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            checkCaptcha();
-        }
-    });
-
-    // Инициализация капчи при загрузке страницы
-    window.addEventListener('load', () => {
-        generateCaptcha();
+    // Инициализация (если нужно)
+    window.addEventListener('load', function() {
+        // Можно добавить дополнительные действия при загрузке
     });
     </script>
 </body>
