@@ -2,14 +2,232 @@
 <html lang="ru">
 <head>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kyynet Rules</title>
     <!-- Подключаем шрифт -->
     <link href="https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Подключаем hCaptcha -->
     <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <style>
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #8e2de2, #4a00e0);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .scroll-top.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(142, 45, 226, 0.4);
+            background: linear-gradient(135deg, #9b43e8, #5a1ae6);
+        }
+
+        .scroll-top i {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .scroll-top:hover i {
+            transform: translateY(-3px);
+        }
+
+        /* Анимация пульсации */
+        .scroll-top::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            animation: pulse 2s infinite;
+            z-index: -1;
+            opacity: 0;
+        }
+
+        .scroll-top:hover::after {
+            opacity: 1;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            70% {
+                transform: scale(1.3);
+                opacity: 0;
+            }
+            100% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+        }
+        
+        .social-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .social-icon {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        
+        /* Discord */
+        .discord {
+            background: linear-gradient(45deg, #5865F2, #7289DA);
+        }
+        
+        /* Telegram */
+        .telegram {
+            background: linear-gradient(45deg, #2AABEE, #229ED9);
+        }
+        
+        .social-icon i {
+            font-size: 36px;
+            color: white;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-10px) scale(1.1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .social-icon:hover i {
+            transform: scale(1.2);
+        }
+        
+        /* Анимация пульсации */
+        .social-icon::before {
+            content: '';
+            position: absolute;
+            width: 120%;
+            height: 120%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: scale(0);
+            transition: all 0.5s ease;
+        }
+        
+        .social-icon:hover::before {
+            transform: scale(1);
+            opacity: 0;
+        }
+        
+        /* Эффект блеска */
+        .social-icon::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 40px;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(30deg);
+            transition: all 0.8s ease;
+        }
+        
+        .social-icon:hover::after {
+            left: 120%;
+        }
+        body {
+            background-color: #e665655e;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        
+        .highlight-message {
+            background-color: rgba(216, 16, 66, 0.26);
+            border-left: 3px solid #912f4879;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 15px 15px 0;
+            position: relative;
+            overflow: hidden;
+            animation: highlight-pulse 5s infinite alternate;
+        }
+        
+        .highlight-message::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 0, 0.1),
+                transparent
+            );
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes highlight-pulse {
+            from {
+                box-shadow: 0 0 15px rgba(221, 15, 15, 0.301);
+            }
+            to {
+                box-shadow: 0 0 22px rgba(223, 15, 15, 0.568);
+            }
+        }
+        
+        @keyframes shine {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        .message-author {
+            color: #f8cf29d2;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .message-text {
+            color: #ffffff;
+        }
         body {
             background-color: #1a1a1a;
             background-size: cover;
@@ -303,36 +521,47 @@
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">1.2 Администрация вправе корректировать данный свод правил без уведомления игрока</div>
+                <div class="faq-question">1.2 Администрация вправе корректировать данный свод правил без уведомления игрока.</div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">1.3 Администрация вправе выдать наказание со сроком, не предусмотренным в данном своде правил</div>
+                <div class="faq-question">1.3 Администрация вправе выдать наказание со сроком, не предусмотренным в данном своде правил.</div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">1.4 Запрещено передавать аккаунты, привилегии, игровые предметы за реальные деньги</div>
-                <div class="faq-answer">→ Наказание: Перманентный бан.</div>
+                <div class="faq-question">1.4 Запрещено передавать аккаунты, привилегии, игровые предметы за реальные деньги.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Перманентный бан.</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">1.5 Намеренные попытки ухудшить или обрушить работу сервера запрещены</div>
-                <div class="faq-answer">→ Наказание: Перманентный бан.</div>
+                <div class="faq-question">1.5 Намеренные попытки ухудшить или обрушить работу сервера запрещены.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Перманентный бан.</div>
+    </div>
+        </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">1.6 Распространение личной информации, включая фотографии, запрещено.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Бан от 3 до 14 дней (в зависимости от тяжести).
+</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">1.6 Распространение личной информации, включая фотографии, запрещено</div>
-                <div class="faq-answer">→ Наказание: Бан от 3 до 14 дней (в зависимости от тяжести).</div>
+                <div class="faq-question">1.7 Запрещено использовать уязвимости сервера для собственной выгоды, а также утаивать и распространять баги/недоработки, дающие преимущества.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Перманентный бан.</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">1.7 Запрещено использовать уязвимости сервера для собственной выгоды, а также утаивать и распространять баги/недоработки, дающие преимущества</div>
-                <div class="faq-answer">→ Наказание: Перманентный бан.</div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question">1.8 Никнейм не должен содержать оскорблений, пропаганду, рекламу и должен быть читаемым</div>
-                <div class="faq-answer">→ Наказание: Сначала кик с предупреждением, далее — блокировка аккаунта перманентно.</div>
+                <div class="faq-question">1.8 Никнейм не должен содержать оскорблений, пропаганду, рекламу и должен быть читаемым.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Сначало кик с предупреждением, далее -- блокировка аккаунта перманентно.</div>
+    </div>
             </div>
             
             <div class="faq-item">
@@ -340,13 +569,17 @@
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">1.10 Запрещено выдавать себя за администратора сервера, даже в шуточной форме</div>
-                <div class="faq-answer">→ Наказание: Бан на 14 дней.</div>
+                <div class="faq-question">1.10 Запрещено выдавать себя за администратора сервера, даже в шуточной форме.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Бан на 14 дней.</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">1.11 Обход наказаний строго запрещён</div>
-                <div class="faq-answer">→ Наказание: Перманентный бан по IP.</div>
+                <div class="faq-question">1.11 Обход наказаний строго запрещён.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Перманентный бан по IP.</div>
+    </div>
             </div>
         </div>
         
@@ -354,38 +587,49 @@
             <h2>Общение в чате</h2>
             
             <div class="faq-item">
-                <div class="faq-question">2.1 Маты разрешены, но чрезмерные (даже завуалированные) оскорбления игроков караются мутом</div>
-                <div class="faq-answer">→ Наказание: 1 час.</div>
+                <div class="faq-question">2.1 Маты разрешены, но чрезмерные (даже завуалированные) оскорбления игроков караются мутом.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Мут на 1 час.</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">2.1.1 Запрещены любые оскорбления в адрес администрации и модерации, включая завуалированные</div>
-                <div class="faq-answer">→ Наказание: Мут на 12 часов.</div>
+                <div class="faq-question">2.1.1 Запрещены любые оскорбления в адрес администрации и модерации, включая завуалированные.</div>
+                <div class="highlight-message">
+        <div class="message-author"> Наказание: Мут на 12 часов.</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">2.2 Спам, флуд и CAPS не приветствуются</div>
-                <div class="faq-answer">
-                    - Спамом считается повтор 3 или более одинаковых по смыслу сообщений<br>
-                    - Флудом считается повторение более 10 символов в 1 сообщении<br>
-                    - CAPS-ом считается сообщение, содержащее от 5 подряд идущих заглавных букв<br>
-                    → Наказание: Мут от 1 часа.
-                </div>
+                <div class="faq-question">2.2 Спам, флуд и CAPS не приветствуются.</div>
+                <div class="highlight-message">
+        <div class="message-author">- Спамом считается повтор 3 или более одинаковых по смыслу сообщений.<br>
+- Флудом считается повторение более 10 символов в 1 сообщении.<br>
+- CAPS-ом считается сообщение, содержащее от 5 подряд идущих заглавных букв. <br>
+
+ Наказание: Мут от 1 часа.</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">2.3 Строго запрещена реклама всего, что не относится к проекту (читы, другие проекты и так далее)</div>
-                <div class="faq-answer">→ Наказание: Перманентный бан.</div>
+                <div class="faq-question">2.3 Строго запрещена реклама всего, что не относится к проекту (читы, другие проекты и так далее).</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Перманентный бан.</div>
+    </div>
             </div>
             
             <div class="faq-item">
                 <div class="faq-question">2.4 Запрещена пропаганда нацизма, фашизма, расизма и дискриминация</div>
-                <div class="faq-answer">→ Наказание: Мут на 15 часов.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Мут на 15 часов.</div>
+    </div>
             </div>
             
             <div class="faq-item">
                 <div class="faq-question">2.5 Запрещены провокации на конфликты</div>
-                <div class="faq-answer">→ Наказание: Мут на 1 час.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Мут на 1 час.</div>
+    </div>
             </div>
         </div>
         
@@ -394,56 +638,96 @@
             
             <div class="faq-item">
                 <div class="faq-question">3.1 Политические и 18+ постройки запрещены</div>
-                <div class="faq-answer">→ Наказание: Удаление постройки + бан на 7 дней.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Удаление постройки + бан на 7 дней.</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">3.2 Если на доме не было привата, его приватизация другим игроком не считается нарушением</div>
-                <div class="faq-answer">Администрация не вмешивается в споры о незащищенных постройках.</div>
+                <div class="faq-question">3.2 Если на доме не было привата, его приватизация другим игроком не считается нарушением.</div>
+    </div>
             </div>
             
             <div class="faq-item">
                 <div class="faq-question">3.3 Запрещено намеренно портить карту постройками, взрывами и т.п.</div>
-                <div class="faq-answer">→ Наказание: Бан на 3 дня.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Бан на 3 дня.</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">3.4 Запрещено гриферство в любом его проявлении</div>
-                <div class="faq-answer">→ Наказание: Бан от 7 дней до перманентного.<br>Примечание: ресурсы в данном случае возвращаться не будут.</div>
-            </div>
-        </div>
+                <div class="faq-question">3.4 Запрещено гриферство в любом его проявлении.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Бан от 7 дней до перманентного.</div>
+        <div class="message-author">Примечание: Ресурсы в данном случае возвращаться не будут.</div>
+    </div>
+    </div>
         
         <div class="faq-section">
             <h2>Технические вопросы</h2>
             
             <div class="faq-item">
-                <div class="faq-question">4.1 При проблемах с донатом необходимо обратиться к администрации сервера</div>
-                <div class="faq-answer">Для решения вопросов, связанных с донатом - напишите администрации.</div>
+                <div class="faq-question">4.1 При проблемах с донатом необходимо обратиться к администрации сервера.</div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">4.2 Разбан возможен через администрацию, если он не был выдан навсегда</div>
-                <div class="faq-answer">Условия: Рассматривается индивидуально.</div>
+                <div class="faq-question">4.2 Разбан возможен через администрацию, если он не был выдан навсегда.</div>
+                <div class="highlight-message">
+        <div class="message-author">Условия: Рассматривается индивидуально.</div>
+    </div>
             </div>
             
             <div class="faq-item">
-                <div class="faq-question">4.3 Обман администрации строго запрещён</div>
-                <div class="faq-answer">→ Наказание: Бан от 7 дней до перманентного.</div>
-            </div>
-            
+                <div class="faq-question">4.3 Обман администрации строго запрещён.</div>
+                <div class="highlight-message">
+        <div class="message-author">Наказание: Бан от 7 дней до перманентного.</div>
+</div>
+    </div>
             <div class="faq-item">
-                <div class="faq-question">4.4 Возврат средств за донат невозможен (возможны исключения)</div>
-                <div class="faq-answer">Все платежи за внутриигровые привилегии являются добровольными и невозвратными, за исключением особых случаев.</div>
-            </div>
+                <div class="faq-question">4.4 Возврат средств за донат невозможен (возможны исключения).</div>
         </div>
+    </div>
         
         <footer>
             <p>© 2025 play.kyynet.net. Все права защищены.</p>
-            <a href="https://t.me/kyynet2" class="minecraft-btn">Telegram</a>
-            <a href="#" class="minecraft-btn">В начало</a>
-            <a href="https://discord.gg/kyynet" class="minecraft-btn">Discord</a>
         </footer>
+        <div class="social-container">
+        <!-- Discord -->
+        <a href="https://discord.gg/kyynet" class="social-icon discord">
+            <i class="fab fa-discord"></i>
+        </a>
+
+         <button class="scroll-top" title="Наверх">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+        
+        <!-- Telegram -->
+        <a href="https://t.me/kyynet2" class="social-icon telegram">
+            <i class="fab fa-telegram-plane"></i>
+        </a>
     </div>
+    </div>
+    
+    <script>
+        const scrollBtn = document.querySelector('.scroll-top');
+        
+        // Показываем кнопку при прокрутке
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollBtn.classList.add('active');
+            } else {
+                scrollBtn.classList.remove('active');
+            }
+        });
+        
+        // Плавная прокрутка вверх при клике
+        scrollBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
 
     <script>
     // Защита от открытия DevTools
